@@ -1,6 +1,7 @@
 package fi.maggots.objects3d
 
 import android.opengl.GLES20
+import fi.maggots.renderer.loadShader
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -26,14 +27,6 @@ class Triangle {
                 "void main() {" +
                 "  gl_FragColor = vColor;" +
                 "}"
-
-    private fun loadShader(type: Int, shaderCode: String): Int {
-        return GLES20.glCreateShader(type).also {
-                shader ->
-            GLES20.glShaderSource(shader, shaderCode)
-            GLES20.glCompileShader(shader)
-        }
-    }
 
     private var mProgram: Int
 
