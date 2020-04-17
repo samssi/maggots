@@ -13,7 +13,9 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context) {
         setEGLContextClientVersion(2)
         renderer = GameRenderer()
         setRenderer(renderer)
-        renderMode = RENDERMODE_WHEN_DIRTY
+        // Render the view only when there is a change in the drawing data.
+        // To allow the triangle to rotate automatically, this line is commented out:
+        //renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
     }
 }
 
