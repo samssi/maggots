@@ -3,11 +3,13 @@ package fi.maggots.renderer
 import android.opengl.GLSurfaceView
 import android.opengl.GLU
 import fi.maggots.objects3d.Cube
+import fi.maggots.objects3d.Triangle
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 internal class GameRenderer : GLSurfaceView.Renderer {
     private val cube = Cube()
+    private val triangle = Triangle()
     private var rotation : Float = 0f;
 
     override fun onDrawFrame(gl: GL10?) {
@@ -17,7 +19,7 @@ internal class GameRenderer : GLSurfaceView.Renderer {
         gl?.glRotatef(rotation, 1.0f, 1.0f, 1.0f);
         cube.draw(gl!!);
         gl.glLoadIdentity();
-        rotation -= 0.55f;
+        //rotation -= 0.55f;
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
