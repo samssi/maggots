@@ -1,5 +1,36 @@
 OpenGL ES - Android
 
+# Andoroid coordinate system
+
+* Counter clockwise is the usual way of reading the coordinates
+* Float based
+* Maximum coordinates of the system on 2D plane (corners)
+    * -1.0, -1.0
+    * -1.0, 1,0
+    * 1.0, 1.0
+    * 1.0, -1.0
+
+
+Vertex Shader - 
+Fragment Shader - textures.
+# Program
+
+* An OpenGL ES object that contains the shaders you want to use for drawing one or more shapes
+
+# The Graphics pipeline
+
+# Vertex Shaders
+
+* OpenGL ES graphics code for rendering the vertices of a shape
+
+# Shape Assembly
+
+# Rasterization
+
+# Fragment shader
+
+* OpenGL ES code for rendering the face of a shape with colors
+
 # Projection
 
 * Calculation which adjusts the coordinates based on width and height of the GLSurfaceView
