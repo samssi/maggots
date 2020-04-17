@@ -6,16 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import fi.maggots.renderer.GameRenderer
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var glView: GLSurfaceView
-
-    public override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        glView = MaggotsSurfaceView(this)
-        setContentView(glView)
-    }
-}
-
 class MaggotsSurfaceView(context: Context) : GLSurfaceView(context) {
     private val renderer: GameRenderer
 
@@ -24,6 +14,16 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context) {
         renderer = GameRenderer()
         setRenderer(renderer)
         renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
+    }
+}
+
+class MainActivity : AppCompatActivity() {
+    private lateinit var glView: GLSurfaceView
+
+    public override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        glView = MaggotsSurfaceView(this)
+        setContentView(glView)
     }
 }
 
