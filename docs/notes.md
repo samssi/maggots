@@ -42,3 +42,6 @@ Fragment Shader - textures.
 * OpenGL ES has utility methods which can be used to simulate a camera by transforming display of drawn objects
 * Camera view calculation might be calculated on creation of GLSurfaceView or when application state get changed in camera effecting way eg. user input
 
+# Rotation matrix
+
+* Transformation matrix used for rotation combined with projection and cameraview transformation matrices

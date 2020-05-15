@@ -9,3 +9,18 @@ Android development notes:
 
 OpenGl docs:
 * https://open.gl/drawing
+
+
+OpenGl shader file extenstions:
+
+.vert - a vertex shader
+
+.tesc - a tessellation control shader
+
+.tese - a tessellation evaluation shader
+
+.geom - a geometry shader
+
+.frag - a fragment shader
+
+.comp - a compute shader
