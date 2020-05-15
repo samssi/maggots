@@ -1,7 +1,10 @@
 package fi.maggots.objects3d
 
+import android.content.Context
 import android.opengl.GLES20
+import fi.maggots.renderer.fragmentAssetsDirectory
 import fi.maggots.renderer.loadShader
+import fi.maggots.renderer.shaderAssetsDirectory
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -14,7 +17,7 @@ var triangleCoords = floatArrayOf(
     0.5f, -0.5f, 0.0f      // bottom right
 )
 
-class Triangle {
+class Triangle(context: Context) {
     private val vertexShaderCode =
     // This matrix member variable provides a hook to manipulate
         // the coordinates of the objects that use this vertex shader
@@ -40,8 +43,8 @@ class Triangle {
     private var mProgram: Int
 
     init {
-        val vertexShader: Int = loadShader(GLES20.GL_VERTEX_SHADER, vertexShaderCode)
-        val fragmentShader: Int = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentShaderCode)
+        val vertexShader: Int = loadShader(context, GLES20.GL_VERTEX_SHADER, "${shaderAssetsDirectory}/default.vert")
+        val fragmentShader: Int = loadShader(context, GLES20.GL_FRAGMENT_SHADER, "${fragmentAssetsDirectory}/default.frag")
 
         mProgram = GLES20.glCreateProgram().also {
             GLES20.glAttachShader(it, vertexShader)

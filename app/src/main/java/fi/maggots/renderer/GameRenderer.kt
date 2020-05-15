@@ -1,5 +1,6 @@
 package fi.maggots.renderer
 
+import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
@@ -9,10 +10,11 @@ import javax.microedition.khronos.opengles.GL10
 
 private lateinit var mTriangle: Triangle
 
-class GameRenderer : GLSurfaceView.Renderer {
+class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Matrix"
+    private val context: Context
+) : GLSurfaceView.Renderer {
     @Volatile
     var angle: Float = 0f
-    // vPMatrix is an abbreviation for "Model View Projection Matrix"
     private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
     private val rotationMatrix = FloatArray(16)
@@ -56,6 +58,6 @@ class GameRenderer : GLSurfaceView.Renderer {
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         // Set background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-        mTriangle = Triangle()
+        mTriangle = Triangle(context)
     }
 }

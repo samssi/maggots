@@ -16,7 +16,7 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context) {
 
     init {
         setEGLContextClientVersion(2)
-        renderer = GameRenderer()
+        renderer = GameRenderer(context)
         setRenderer(renderer)
 
         // Render the view only when there is a change in the drawing data
