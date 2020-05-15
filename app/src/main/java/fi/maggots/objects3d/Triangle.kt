@@ -2,9 +2,8 @@ package fi.maggots.objects3d
 
 import android.content.Context
 import android.opengl.GLES20
-import fi.maggots.renderer.fragmentAssetsDirectory
 import fi.maggots.renderer.loadShader
-import fi.maggots.renderer.shaderAssetsDirectory
+import fi.maggots.renderer.shaderFile
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -24,8 +23,8 @@ class Triangle(context: Context) {
     private var mProgram: Int
 
     init {
-        val vertexShader: Int = loadShader(context, GLES20.GL_VERTEX_SHADER, "${shaderAssetsDirectory}/default.vert")
-        val fragmentShader: Int = loadShader(context, GLES20.GL_FRAGMENT_SHADER, "${fragmentAssetsDirectory}/default.frag")
+        val vertexShader: Int = loadShader(context, GLES20.GL_VERTEX_SHADER, shaderFile("default.vert", GLES20.GL_VERTEX_SHADER))
+        val fragmentShader: Int = loadShader(context, GLES20.GL_FRAGMENT_SHADER, shaderFile("default.frag", GLES20.GL_FRAGMENT_SHADER))
 
         mProgram = GLES20.glCreateProgram().also {
             GLES20.glAttachShader(it, vertexShader)

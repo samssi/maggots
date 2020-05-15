@@ -2,19 +2,21 @@ package fi.maggots.renderer
 
 import android.content.Context
 import android.opengl.GLES20
-import java.io.InputStream
-import java.nio.charset.Charset
+import fi.maggots.core.readTextAndClose
 
-fun InputStream.readTextAndClose(charset: Charset = Charsets.UTF_8): String {
-    return this.bufferedReader(charset).use { it.readText() }
+private const val vertexAssetsDirectory = "shader/vertex";
+private const val fragmentAssetsDirectory = "shader/fragment"
+
+private fun openShader(context: Context, filepath: String): String {
+    return context.assets.open(filepath).readTextAndClose()
 }
 
-internal const val shaderAssetsDirectory = "shader/vertex";
-internal const val fragmentAssetsDirectory = "shader/fragment"
-
-
-internal fun openShader(context: Context, filepath: String): String {
-    return context.assets.open(filepath).readTextAndClose()
+internal fun shaderFile(shaderFile: String, type: Int): String {
+    return when (type) {
+        GLES20.GL_VERTEX_SHADER -> "${vertexAssetsDirectory}/${shaderFile}"
+        GLES20.GL_FRAGMENT_SHADER -> "${fragmentAssetsDirectory}/${shaderFile}"
+        else -> throw UnsupportedOperationException("Unknown shadertype given!")
+    }
 }
 
 internal fun loadShader(context: Context, type: Int, shaderPath: String): Int {
