@@ -22,7 +22,7 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context) {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when(event.action) {
             MotionEvent.ACTION_MOVE -> {
-                renderer.mTriangle.angle += renderer.mTriangle.move(renderer.mTriangle, event.x, event.y, height, width)
+                renderer.mTriangle.angle += renderer.mTriangle.move(event.x, event.y, height, width)
                 requestRender()
             }
         }

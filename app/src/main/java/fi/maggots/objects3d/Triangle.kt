@@ -102,22 +102,22 @@ class Triangle(context: Context) {
         }
     }
 
-    internal fun move(triangle: Triangle, x: Float, y: Float, height: Int, width: Int): Float {
-        var directionX: Float = x - triangle.x
-        var directionY: Float = y - triangle.y
+    internal fun move(newX: Float, newY: Float, height: Int, width: Int): Float {
+        var directionX: Float = newX - x
+        var directionY: Float = newY - y
 
         // reverse direction of rotation above the mid-line
-        if (y > height / 2) {
+        if (newY > height / 2) {
             directionX *= -1
         }
 
         // reverse direction of rotation to left of the mid-line
-        if (x < width / 2) {
+        if (newX < width / 2) {
             directionY *= -1
         }
 
-        triangle.x = x
-        triangle.y = y
+        x = newX
+        y = newY
 
         return (directionX + directionY) * TOUCH_SCALE_FACTOR
     }
