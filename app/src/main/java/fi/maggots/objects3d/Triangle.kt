@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLES20
 import fi.maggots.renderer.loadShader
 import fi.maggots.renderer.shaderFileAndType
+import fi.maggots.view.TOUCH_SCALE_FACTOR
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
@@ -60,7 +61,7 @@ class Triangle(context: Context) {
     private val vertexCount: Int = triangleCoords.size / COORDS_PER_VERTEX
     private val vertexStride: Int = COORDS_PER_VERTEX * 4 // 4 bytes per vertex
 
-    fun draw(mvpMatrix: FloatArray) { // pass in the calculated transformation matrix
+    internal fun draw(mvpMatrix: FloatArray) { // pass in the calculated transformation matrix
         drawShapes()
         attachCamera(mvpMatrix)
     }
@@ -99,5 +100,25 @@ class Triangle(context: Context) {
                 GLES20.glDisableVertexAttribArray(it)
             }
         }
+    }
+
+    internal fun move(triangle: Triangle, x: Float, y: Float, height: Int, width: Int): Float {
+        var directionX: Float = x - triangle.x
+        var directionY: Float = y - triangle.y
+
+        // reverse direction of rotation above the mid-line
+        if (y > height / 2) {
+            directionX *= -1
+        }
+
+        // reverse direction of rotation to left of the mid-line
+        if (x < width / 2) {
+            directionY *= -1
+        }
+
+        triangle.x = x
+        triangle.y = y
+
+        return (directionX + directionY) * TOUCH_SCALE_FACTOR
     }
 }
