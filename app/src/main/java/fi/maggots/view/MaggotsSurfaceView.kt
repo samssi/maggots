@@ -45,7 +45,12 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
     override fun onDown(event: MotionEvent?): Boolean { return false }
     override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean { return false }
     override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean { return false }
-    override fun onLongPress(e: MotionEvent?) { }
+    override fun onLongPress(e: MotionEvent?) {
+        Log.d(DEBUG_TAG, "longPress")
+        renderer.camera.centerX -= 0.1f
+        renderer.camera.eyeX -= 0.1f
+        requestRender()
+    }
     override fun onDoubleTap(e: MotionEvent?): Boolean {
         Log.d(DEBUG_TAG, "doubleTap")
         return false
