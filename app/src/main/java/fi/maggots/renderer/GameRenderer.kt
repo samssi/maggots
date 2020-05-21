@@ -5,6 +5,7 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import fi.maggots.objects3d.Triangle
+import fi.maggots.view.Camera
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -12,6 +13,7 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
     private val context: Context
 ) : GLSurfaceView.Renderer {
     internal lateinit var mTriangle: Triangle
+    private val camera = Camera(FloatArray(16), 0,0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
     private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
     private val rotationMatrix = FloatArray(16)
@@ -24,7 +26,7 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
 
         // Set the camera position
-        Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+        Matrix.setLookAtM(viewMatrix, 0, camera.eyeX, camera.eyeY, camera.eyeZ, camera.centerX, camera.centerY, camera.centerZ, camera.upX, camera.upY, camera.upZ)
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
