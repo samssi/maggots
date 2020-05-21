@@ -8,13 +8,10 @@ import fi.maggots.objects3d.Triangle
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-private lateinit var mTriangle: Triangle
-
 class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Matrix"
     private val context: Context
 ) : GLSurfaceView.Renderer {
-    @Volatile
-    var angle: Float = 0f
+    internal lateinit var mTriangle: Triangle
     private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
     private val rotationMatrix = FloatArray(16)
@@ -35,7 +32,7 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
         // Create a rotation transformation for the triangle
         //val time = SystemClock.uptimeMillis() % 4000L
         //val angle = 0.090f * time.toInt()
-        Matrix.setRotateM(rotationMatrix, 0, angle, 0f, 0f, -1.0f)
+        Matrix.setRotateM(rotationMatrix, 0, mTriangle.angle, 0f, 0f, -1.0f)
 
         // Combine the rotation matrix with the projection and camera view
         // Note that the vPMatrix factor *must be first* in order

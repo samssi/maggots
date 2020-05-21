@@ -9,6 +9,7 @@ import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
 const val COORDS_PER_VERTEX = 3
+
 var triangleCoords = floatArrayOf(
     // in counterclockwise order:
     0.0f, 0.5f, 0.0f,      // top
@@ -21,6 +22,13 @@ class Triangle(context: Context) {
     private var vPMatrixHandle: Int = 0
 
     private var mProgram: Int
+
+    @Volatile
+    var angle: Float = 0f
+    @Volatile
+    var x: Float = 0f
+    @Volatile
+    var y: Float = 0f
 
     init {
         val vertexShader: Int = loadShader(context, shaderFileAndType("default.vert"))
