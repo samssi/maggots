@@ -13,7 +13,7 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
     private val context: Context
 ) : GLSurfaceView.Renderer {
     internal lateinit var mTriangle: Triangle
-    private val camera = Camera(FloatArray(16), 0,0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+    internal val camera = Camera(FloatArray(16), 0,0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
     private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
     private val rotationMatrix = FloatArray(16)
