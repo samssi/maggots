@@ -10,7 +10,17 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
-class Triangle(context: Context) {
+abstract class OpenGlObject {
+    internal var positionHandle: Int = 0
+    internal val vertexStride: Int = COORDINATES_PER_VERTEX * 4 // 4 bytes per vertex
+
+    abstract fun vertexShader(context: Context): Int
+    abstract fun fragmentShader(context: Context): Int
+    abstract fun program(context: Context): Int
+    abstract fun coordinates(): FloatArray
+}
+
+class Triangle(context: Context): OpenGlObject() {
     @Volatile
     internal var angle: Float = 0f
     @Volatile
@@ -18,42 +28,22 @@ class Triangle(context: Context) {
     @Volatile
     internal var y: Float = 0f
 
-    internal var positionHandle: Int = 0
     private var mColorHandle: Int = 0
-
-    val vertexShader: Int = loadShader(context, shaderFileAndType("default.vert"))
-    val fragmentShader: Int = loadShader(context, shaderFileAndType("default.frag"))
-    private val vertexStride: Int = COORDINATES_PER_VERTEX * 4 // 4 bytes per vertex
 
     // Set color with red, green, blue and alpha (opacity) values
     private val color = floatArrayOf(0.63671875f, 0.76953125f, 0.22265625f, 1.0f)
 
-    internal var mProgram: Int = 0
+    internal var mProgram: Int = program(context)
 
-    private var coordinates = floatArrayOf(
-        // in counterclockwise order:
-        0.0f, 0.5f, 0.0f,      // top
-        -0.5f, -0.5f, 0.0f,    // bottom left
-        0.5f, -0.5f, 0.0f      // bottom right
-    )
+    internal val vertexCount: Int = coordinates().size / COORDINATES_PER_VERTEX
 
-    internal val vertexCount: Int = coordinates.size / COORDINATES_PER_VERTEX
-
-    init {
-        mProgram = GLES20.glCreateProgram().also {
-            GLES20.glAttachShader(it, vertexShader)
-            GLES20.glAttachShader(it, fragmentShader)
-            GLES20.glLinkProgram(it)
-        }
-    }
-
-    internal var vertexBuffer: FloatBuffer =
+    private var vertexBuffer: FloatBuffer =
         // (number of coordinate values * 4 bytes per float)
-        ByteBuffer.allocateDirect(coordinates.size * 4).run {
+        ByteBuffer.allocateDirect(coordinates().size * 4).run {
             // use the device hardware's native byte order
             order(ByteOrder.nativeOrder())
             asFloatBuffer().apply {
-                put(coordinates)
+                put(coordinates())
                 position(0)
             }
         }
@@ -92,11 +82,38 @@ class Triangle(context: Context) {
                 vertexBuffer
             )
 
+            // Here you assign the color for default.frag glsl see vColor
             mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor").also {
-                    colorHandle -> GLES20.glUniform4fv(colorHandle, 1, color, 0)
-                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
-                GLES20.glDisableVertexAttribArray(it)
+                colorHandle ->
+                    GLES20.glUniform4fv(colorHandle, 1, color, 0)
+                    GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, vertexCount)
+                    GLES20.glDisableVertexAttribArray(it)
             }
         }
+    }
+
+    override fun vertexShader(context: Context): Int {
+        return loadShader(context, shaderFileAndType("default.vert"))
+    }
+
+    override fun fragmentShader(context: Context): Int {
+        return loadShader(context, shaderFileAndType("default.frag"))
+    }
+
+    override fun program(context: Context): Int {
+        return GLES20.glCreateProgram().also {
+            GLES20.glAttachShader(it, vertexShader(context))
+            GLES20.glAttachShader(it, fragmentShader(context))
+            GLES20.glLinkProgram(it)
+        }
+    }
+
+    override fun coordinates(): FloatArray {
+        return floatArrayOf(
+            // in counterclockwise order:
+            0.0f, 0.5f, 0.0f,      // top
+            -0.5f, -0.5f, 0.0f,    // bottom left
+            0.5f, -0.5f, 0.0f      // bottom right
+        )
     }
 }

@@ -45,12 +45,8 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
         // for the matrix multiplication product to be correct.
         Matrix.multiplyMM(scratch, 0, vPMatrix, 0, rotationMatrix, 0)
 
-        draw(scratch)
-    }
-
-    private fun draw(mvpMatrix: FloatArray) { // pass in the calculated transformation matrix
         mTriangle.draw()
-        attachCamera(mvpMatrix)
+        attachCamera(scratch)
     }
 
     private fun attachCamera(mvpMatrix: FloatArray) {
