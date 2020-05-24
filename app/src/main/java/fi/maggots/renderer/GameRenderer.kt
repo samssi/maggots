@@ -22,7 +22,6 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
     private val viewMatrix = FloatArray(16)
     // Use to access and set the view transformation
     private var vPMatrixHandle: Int = 0
-    private var mProgram: Int = 0
 
     override fun onDrawFrame(gl: GL10?) {
         val scratch = FloatArray(16)
@@ -49,19 +48,14 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
         draw(scratch)
     }
 
-    private var positionHandle: Int = 0
-    private var mColorHandle: Int = 0
-
-    private val vertexStride: Int = COORDINATES_PER_VERTEX * 4 // 4 bytes per vertex
-
     private fun draw(mvpMatrix: FloatArray) { // pass in the calculated transformation matrix
-        drawShapes()
+        mTriangle.draw()
         attachCamera(mvpMatrix)
     }
 
     private fun attachCamera(mvpMatrix: FloatArray) {
         // get handle to shape's transformation matrix
-        vPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix")
+        vPMatrixHandle = GLES20.glGetUniformLocation(mTriangle.mProgram, "uMVPMatrix")
 
         // Pass the projection and view transformation to the shader
         GLES20.glUniformMatrix4fv(vPMatrixHandle, 1, false, mvpMatrix, 0)
@@ -70,31 +64,7 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mTriangle.vertexCount)
 
         // Disable vertex array
-        GLES20.glDisableVertexAttribArray(positionHandle)
-    }
-    // Set color with red, green, blue and alpha (opacity) values
-    private val color = floatArrayOf(0.63671875f, 0.76953125f, 0.22265625f, 1.0f)
-
-    private fun drawShapes() {
-        GLES20.glUseProgram(mProgram)
-        positionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition").also {
-            GLES20.glEnableVertexAttribArray(it)
-
-            GLES20.glVertexAttribPointer(
-                it,
-                COORDINATES_PER_VERTEX,
-                GLES20.GL_FLOAT,
-                false,
-                vertexStride,
-                mTriangle.vertexBuffer
-            )
-
-            mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor").also {
-                    colorHandle -> GLES20.glUniform4fv(colorHandle, 1, color, 0)
-                GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, mTriangle.vertexCount)
-                GLES20.glDisableVertexAttribArray(it)
-            }
-        }
+        GLES20.glDisableVertexAttribArray(mTriangle.positionHandle)
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -108,17 +78,8 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        val vertexShader: Int = loadShader(context, shaderFileAndType("default.vert"))
-        val fragmentShader: Int = loadShader(context, shaderFileAndType("default.frag"))
-
         // Set background frame color
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f)
-
-        mProgram = GLES20.glCreateProgram().also {
-            GLES20.glAttachShader(it, vertexShader)
-            GLES20.glAttachShader(it, fragmentShader)
-            GLES20.glLinkProgram(it)
-        }
 
         mTriangle = Triangle(context)
     }
