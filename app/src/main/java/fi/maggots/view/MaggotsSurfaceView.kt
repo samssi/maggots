@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.MotionEventCompat
 import fi.maggots.renderer.GameRenderer
 import fi.maggots.util.DEBUG_TAG
 
@@ -25,14 +26,38 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
         renderMode = RENDERMODE_WHEN_DIRTY
     }
 
+    private fun moveEvent(event: MotionEvent): Boolean {
+        Log.d(DEBUG_TAG,"ACTION_MOVE, x: ${event.x}, y: ${event.y}")
+        Log.d(DEBUG_TAG, "ACTION_MOVE, pointer count: ${event.pointerCount}");
+        return when (event.pointerCount) {
+            1 -> {
+                renderer.mTriangle.angle += renderer.mTriangle.move(event.x, event.y, height, width)
+                requestRender()
+                true
+            }
+            2 -> {
+                Log.d(DEBUG_TAG,"ACTION_MOVE pointer 1, x: ${event.getX(0)}, y: ${event.getY(0)}")
+                Log.d(DEBUG_TAG,"ACTION_MOVE pointer 2, x: ${event.getX(1)}, y: ${event.getY(1)}")
+                true
+            }
+            else -> {
+                false
+            }
+        }
+    }
+
+    // TODO: https://developer.android.com/training/gestures/scale
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return if (mDetector.onTouchEvent(event)) {
             true
         } else {
             when(event.action) {
                 MotionEvent.ACTION_MOVE -> {
-                    renderer.mTriangle.angle += renderer.mTriangle.move(event.x, event.y, height, width)
-                    requestRender()
+                    return moveEvent(event)
+                }
+                MotionEvent.ACTION_DOWN -> {
+                    Log.d(DEBUG_TAG,"ACTION_DOWN, x: ${event.x}, y: ${event.y}")
+
                 }
             }
             return true
@@ -42,7 +67,10 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
 
     override fun onSingleTapUp(e: MotionEvent?): Boolean { return false }
     override fun onShowPress(e: MotionEvent?) { }
-    override fun onDown(event: MotionEvent?): Boolean { return false }
+    override fun onDown(event: MotionEvent?): Boolean {
+        Log.d(DEBUG_TAG, "onDown")
+        return false
+    }
     override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean { return false }
     override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean { return false }
     override fun onLongPress(e: MotionEvent?) {
@@ -70,3 +98,4 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
         return onSingleTapUp(e)
     }
 }
+

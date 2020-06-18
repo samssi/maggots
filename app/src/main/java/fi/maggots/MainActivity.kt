@@ -8,6 +8,7 @@ import fi.maggots.view.MaggotsSurfaceView
 class MainActivity : AppCompatActivity() {
     private lateinit var glView: GLSurfaceView
 
+
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         glView = MaggotsSurfaceView(this)
