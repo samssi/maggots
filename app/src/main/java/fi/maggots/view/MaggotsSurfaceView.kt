@@ -26,6 +26,25 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
         renderMode = RENDERMODE_WHEN_DIRTY
     }
 
+    private fun zoomDirection(prevAY: Float, aY: Float, bY: Float, prevBY: Float) {
+        // TODO: won't work always because both fingers must move in the same event time
+        // TODO: calculate what happens to distance between A and B touch instead
+        Log.d(DEBUG_TAG, "A: prev: $prevAY, current: $aY")
+        Log.d(DEBUG_TAG, "B: prev: $prevBY, current: $bY")
+        if(aY < prevAY && bY < prevBY) {
+            Log.d(DEBUG_TAG, "ZOOM IN")
+            renderer.camera.eyeX -= 0.1f
+        }
+        else if (aY > prevAY && bY > prevBY) {
+            Log.d(DEBUG_TAG, "ZOOM OUT")
+            renderer.camera.eyeX += 0.1f
+        }
+        requestRender()
+    }
+
+    private var prevA = 0f
+    private var prevB = 0f
+
     private fun moveEvent(event: MotionEvent): Boolean {
         Log.d(DEBUG_TAG,"ACTION_MOVE, x: ${event.x}, y: ${event.y}")
         Log.d(DEBUG_TAG, "ACTION_MOVE, pointer count: ${event.pointerCount}");
@@ -38,6 +57,11 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
             2 -> {
                 Log.d(DEBUG_TAG,"ACTION_MOVE pointer 1, x: ${event.getX(0)}, y: ${event.getY(0)}")
                 Log.d(DEBUG_TAG,"ACTION_MOVE pointer 2, x: ${event.getX(1)}, y: ${event.getY(1)}")
+                if (prevA != 0f && prevB != 0f) {
+                    zoomDirection(prevA, event.getY(0), prevB, event.getY(1))
+                }
+                prevA = event.getY(0)
+                prevB = event.getY(1)
                 true
             }
             else -> {
@@ -58,6 +82,10 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
                 MotionEvent.ACTION_DOWN -> {
                     Log.d(DEBUG_TAG,"ACTION_DOWN, x: ${event.x}, y: ${event.y}")
 
+                }
+                MotionEvent.ACTION_UP -> {
+                    prevA = 0f
+                    prevB = 0f
                 }
             }
             return true
