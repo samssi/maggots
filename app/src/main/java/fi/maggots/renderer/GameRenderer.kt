@@ -8,6 +8,7 @@ import android.util.Log
 import fi.maggots.objects3d.Triangle
 import fi.maggots.util.DEBUG_TAG
 import fi.maggots.view.Camera
+import fi.maggots.view.ZOOM_MIN
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -17,7 +18,7 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
     private val context: Context
 ) : GLSurfaceView.Renderer {
     internal lateinit var mTriangle: Triangle
-    internal val camera = Camera(FloatArray(16), 0,0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f, 1f)
+    internal val camera = Camera(FloatArray(16), 0,0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f, ZOOM_MIN)
     private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
     private val rotationMatrix = FloatArray(16)

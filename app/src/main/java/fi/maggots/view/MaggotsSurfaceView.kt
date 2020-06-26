@@ -30,7 +30,7 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
 
     private fun calculateNewZoom(previousDistance: Float, currentDistance: Float, zoomFactor: Float) {
         val newZoomValue = renderer.camera.zoom + zoomFactor
-        if(newZoomValue > 0.05f && newZoomValue < 1.1f) {
+        if(newZoomValue > ZOOM_MIN && newZoomValue < ZOOM_MAX) {
             renderer.camera.zoom = newZoomValue
         }
     }
