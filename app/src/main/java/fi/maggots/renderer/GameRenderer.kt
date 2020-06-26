@@ -75,7 +75,6 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
 
         aspectRatio = width.toFloat() / height.toFloat()
 
-        Log.d(DEBUG_TAG, "change me!")
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
         Matrix.frustumM(projectionMatrix, 0, -aspectRatio/camera.zoom, aspectRatio/camera.zoom, -1f/camera.zoom, 1f/camera.zoom, 3f, 7f)
