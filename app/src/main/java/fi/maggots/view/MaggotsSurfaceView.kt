@@ -6,9 +6,11 @@ import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.core.view.GestureDetectorCompat
-import androidx.core.view.MotionEventCompat
+import fi.maggots.core.PointsXY
+import fi.maggots.core.pythagoreanDistance
 import fi.maggots.renderer.GameRenderer
 import fi.maggots.util.DEBUG_TAG
+import kotlin.math.abs
 
 internal const val TOUCH_SCALE_FACTOR: Float = 180.0f / 320f
 
@@ -42,12 +44,19 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
         requestRender()
     }
 
-    private var prevA = 0f
-    private var prevB = 0f
+    private fun zoom(previousDistance: Float, currentDistance: Float) {
+        if (currentDistance > previousDistance) {
+            renderer.camera.eyeX -= 0.1f
+        }
+        else if (currentDistance < previousDistance) {
+            renderer.camera.eyeX += 0.1f
+        }
+        requestRender()
+    }
+
+    private var previousDistance = -1f
 
     private fun moveEvent(event: MotionEvent): Boolean {
-        Log.d(DEBUG_TAG,"ACTION_MOVE, x: ${event.x}, y: ${event.y}")
-        Log.d(DEBUG_TAG, "ACTION_MOVE, pointer count: ${event.pointerCount}");
         return when (event.pointerCount) {
             1 -> {
                 renderer.mTriangle.angle += renderer.mTriangle.move(event.x, event.y, height, width)
@@ -55,13 +64,14 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
                 true
             }
             2 -> {
-                Log.d(DEBUG_TAG,"ACTION_MOVE pointer 1, x: ${event.getX(0)}, y: ${event.getY(0)}")
-                Log.d(DEBUG_TAG,"ACTION_MOVE pointer 2, x: ${event.getX(1)}, y: ${event.getY(1)}")
-                if (prevA != 0f && prevB != 0f) {
-                    zoomDirection(prevA, event.getY(0), prevB, event.getY(1))
+                val point1 = PointsXY(event.getX(0), event.getY(0))
+                val point2 = PointsXY(event.getX(1), event.getY(1))
+                val currentDistance = pythagoreanDistance(point1, point2)
+
+                if (previousDistance > -1f) {
+                    zoom(previousDistance, currentDistance)
                 }
-                prevA = event.getY(0)
-                prevB = event.getY(1)
+                previousDistance = currentDistance
                 true
             }
             else -> {
@@ -79,13 +89,9 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
                 MotionEvent.ACTION_MOVE -> {
                     return moveEvent(event)
                 }
-                MotionEvent.ACTION_DOWN -> {
-                    Log.d(DEBUG_TAG,"ACTION_DOWN, x: ${event.x}, y: ${event.y}")
-
-                }
                 MotionEvent.ACTION_UP -> {
-                    prevA = 0f
-                    prevB = 0f
+                    previousDistance = -1f;
+
                 }
             }
             return true
@@ -96,16 +102,15 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
     override fun onSingleTapUp(e: MotionEvent?): Boolean { return false }
     override fun onShowPress(e: MotionEvent?) { }
     override fun onDown(event: MotionEvent?): Boolean {
-        Log.d(DEBUG_TAG, "onDown")
         return false
     }
     override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean { return false }
     override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean { return false }
     override fun onLongPress(e: MotionEvent?) {
-        Log.d(DEBUG_TAG, "longPress")
+        /*Log.d(DEBUG_TAG, "longPress")
         renderer.camera.centerX -= 0.1f
         renderer.camera.eyeX -= 0.1f
-        requestRender()
+        requestRender()*/
     }
     override fun onDoubleTap(e: MotionEvent?): Boolean {
         Log.d(DEBUG_TAG, "doubleTap")
@@ -113,17 +118,19 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
     }
 
     override fun onDoubleTapEvent(e: MotionEvent?): Boolean {
-        Log.d(DEBUG_TAG, "doubleTapEvent")
+        /*Log.d(DEBUG_TAG, "doubleTapEvent")
         renderer.camera.eyeZ += 0.1f
         requestRender()
-        return true
+        return true*/
+        return false
     }
 
     override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-        Log.d(DEBUG_TAG, "singleTapConfirmed")
+        /*Log.d(DEBUG_TAG, "singleTapConfirmed")
         renderer.camera.eyeZ -= 0.1f
         requestRender()
-        return onSingleTapUp(e)
+        return onSingleTapUp(e)*/
+        return false
     }
 }
 
