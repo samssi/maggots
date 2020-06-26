@@ -37,10 +37,10 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
 
     private fun zoom(previousDistance: Float, currentDistance: Float) {
         if (currentDistance < previousDistance) {
-            calculateNewZoom(previousDistance, currentDistance, -0.1f)
+            calculateNewZoom(previousDistance, currentDistance, -0.03f)
         }
         else if (currentDistance > previousDistance) {
-            calculateNewZoom(previousDistance, currentDistance, 0.1f)
+            calculateNewZoom(previousDistance, currentDistance, 0.03f)
         }
         requestRender()
     }
