@@ -28,22 +28,6 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
         renderMode = RENDERMODE_WHEN_DIRTY
     }
 
-    private fun zoomDirection(prevAY: Float, aY: Float, bY: Float, prevBY: Float) {
-        // TODO: won't work always because both fingers must move in the same event time
-        // TODO: calculate what happens to distance between A and B touch instead
-        Log.d(DEBUG_TAG, "A: prev: $prevAY, current: $aY")
-        Log.d(DEBUG_TAG, "B: prev: $prevBY, current: $bY")
-        if(aY < prevAY && bY < prevBY) {
-            Log.d(DEBUG_TAG, "ZOOM IN")
-            renderer.camera.eyeX -= 0.1f
-        }
-        else if (aY > prevAY && bY > prevBY) {
-            Log.d(DEBUG_TAG, "ZOOM OUT")
-            renderer.camera.eyeX += 0.1f
-        }
-        requestRender()
-    }
-
     private fun calculateNewZoom(previousDistance: Float, currentDistance: Float, zoomFactor: Float) {
         val newZoomValue = renderer.camera.zoom + zoomFactor
         if(newZoomValue > 0.05f && newZoomValue < 1.1f) {
@@ -52,10 +36,10 @@ class MaggotsSurfaceView(context: Context) : GLSurfaceView(context), GestureDete
     }
 
     private fun zoom(previousDistance: Float, currentDistance: Float) {
-        if (currentDistance > previousDistance) {
+        if (currentDistance < previousDistance) {
             calculateNewZoom(previousDistance, currentDistance, -0.1f)
         }
-        else if (currentDistance < previousDistance) {
+        else if (currentDistance > previousDistance) {
             calculateNewZoom(previousDistance, currentDistance, 0.1f)
         }
         requestRender()
