@@ -4,7 +4,9 @@ import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import android.util.Log
 import fi.maggots.objects3d.Triangle
+import fi.maggots.util.DEBUG_TAG
 import fi.maggots.view.Camera
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -15,13 +17,15 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
     private val context: Context
 ) : GLSurfaceView.Renderer {
     internal lateinit var mTriangle: Triangle
-    internal val camera = Camera(FloatArray(16), 0,0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f)
+    internal val camera = Camera(FloatArray(16), 0,0f, 0f, -3f, 0f, 0f, 0f, 0f, 1.0f, 0.0f, 1f)
     private val vPMatrix = FloatArray(16)
     private val projectionMatrix = FloatArray(16)
     private val rotationMatrix = FloatArray(16)
     private val viewMatrix = FloatArray(16)
+
     // Use to access and set the view transformation
     private var vPMatrixHandle: Int = 0
+    private var aspectRatio: Float = 0f
 
     override fun onDrawFrame(gl: GL10?) {
         val scratch = FloatArray(16)
@@ -34,6 +38,9 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(vPMatrix, 0, projectionMatrix, 0, viewMatrix, 0)
+
+        // Calculate zoom
+        Matrix.frustumM(projectionMatrix, 0, -aspectRatio/camera.zoom, aspectRatio/camera.zoom, -1f/camera.zoom, 1f/camera.zoom, 3f, 7f)
 
         // Create a rotation transformation for the triangle
         //val time = SystemClock.uptimeMillis() % 4000L
@@ -66,11 +73,12 @@ class GameRenderer(// vPMatrix is an abbreviation for "Model View Projection Mat
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0,0, width, height)
 
-        val aspectRatio: Float = width.toFloat() / height.toFloat()
+        aspectRatio = width.toFloat() / height.toFloat()
 
+        Log.d(DEBUG_TAG, "change me!")
         // this projection matrix is applied to object coordinates
         // in the onDrawFrame() method
-        Matrix.frustumM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, 3f, 7f)
+        Matrix.frustumM(projectionMatrix, 0, -aspectRatio/camera.zoom, aspectRatio/camera.zoom, -1f/camera.zoom, 1f/camera.zoom, 3f, 7f)
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
